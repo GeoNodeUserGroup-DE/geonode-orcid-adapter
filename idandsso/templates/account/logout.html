@@ -1,0 +1,48 @@
+{% extends "account/logout.html" %}
+{% load static %}
+{% load allauth i18n %}
+
+{% block content %}
+<main class="w-100">
+    <section class="bg-gray-2 px-0 mx-0">
+        <div class="container g-0 mx-auto bg-gray-1 rounded-4">
+            <div class="row rounded-4 d-flex justify-content-between align-items-center">
+
+                <div class="col-md-6">
+                    <div class="text-center mx-auto p-5">
+                        <h1 class="fw-bold">{% trans "Sign Out" %}</h1>
+                        <p class="text-muted">{% trans "Are you sure you want to sign out?" %}</p>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p class="text-muted">{% trans "This includes the logout from ORCID. You will end up at the ORCID login page." %}</p>
+                                    <form method="post" action="{% url 'account_logout' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="range" value="incl-orcid-logout">
+                                        <button type="submit" class="btn btn-danger btn-lg">{% trans "Sign Out incl. sign-out from ORCID" %}</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="text-muted">{% trans "This will sign out from this application, only. You will stay signed-in in ORCID. Hence, one click on the sign-in button of the application will directly sign you in again." %}</p>
+                                    <form method="post" action="{% url 'account_logout' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="range" value="idp-only">
+                                        <button type="submit" class="btn btn-danger btn-lg">{% trans "Sign Out This Application Only" %}</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-auto ">
+                    <div class="">
+                        <img src="{% static 'img/bg_login.png' %}" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock content %}

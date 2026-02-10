@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+{% load development_tags %}
+{% load i18n %}
+
+{% block additional_scripts %}
+  {{ block.super }}
+  {% if not user.is_authenticated %}
+    <form id="sso-silent-login-form" method="POST" action="{% provider_login_url socialaccount_provider_id %}" style="display:none;">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.path }}" />
+      <input type="hidden" name="prompt" value="none" />
+    </form>
+
+    <div id="sso-loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:9999; text-align:center; padding-top:20%;">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p style="margin-top:15px; font-family: sans-serif;">{% trans "Performing automatic login..." %}</p>
+    </div>
+
+    <script>
+      (function() {
+        function getCookie(name) {
+          let value = "; " + document.cookie;
+          let parts = value.split("; " + name + "=");
+          if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+        console.log("checking for SSO hint cookie...");
+        const ssoHint = getCookie('sso_hint');
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (ssoHint === 'true' && !urlParams.has('sso_done') && !urlParams.has('error')) {
+          console.log("SSO hint cookie found, starting Silent Login...");
+          document.getElementById('sso-loading-overlay').style.display = 'block';
+          const form = document.getElementById('sso-silent-login-form');
+          const nextInput = form.querySelector('input[name="next"]');
+          const separator = nextInput.value.includes('?') ? '&' : '?';
+          nextInput.value += separator + 'sso_done=1';
+          form.submit();
+        } else {
+          console.log("SSO hint cookie NOT found, staying logged out.");
+        }
+      })();
+    </script>
+  {% else %}
+    <div id="idandsso_is_loaded"></div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "nav.html" %}
+{% load static %}
+{% load i18n %}
+{% load socialaccount %}
+{% load development_tags %}
+{% load idandsso %}
+{% is_debug as debug_mode %}
+
+{% block username %}
+    <li class="nav-item text-white d-none d-lg-block">
+        <span title="{{ user.first_name }} {{user.last_name }}">
+            <div class="fw-semibold">{{ user.username}} <img alt="{% trans 'ORCID logo' %}%" src="{% static 'img/ORCID-iD_icon_16x16.png' %}" width="16px" height="16px" /></div>
+            <div class="text-warning text-sm">ZALF</div>
+        </span>
+    </li>
+{% endblock %}
+
+{% block navigation_login %}
+    <!-- Login & Signup (not authenticated) id&sso template -->
+    <li class="nav-item">
+        <form method="POST" action="{% provider_login_url idandsso_provider_id %}" novalidate="novalidate">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-light btn-sm">{% trans 'Register/Login via ORCID' %}</button>
+        </form>
+    </li>
+    {% if debug_mode %}
+        <li class="nav-item">
+            <a href="{% url 'account_login' %}" class="btn btn-outline-light btn-sm">{% trans 'Login (all options)' %}</a>
+        </li>
+    {% endif %}
+{% endblock %}
