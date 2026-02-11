@@ -18,7 +18,7 @@ license-files = [
 ]
 dependencies = [
     "django>=5.1",
-    "django-allauth[socialaccount]>=65.4",
+    "django-allauth[socialaccount]>=0.63.6",
     "loguru>=0.7.3",
     "python-keycloak==5.8.1",
 ]
